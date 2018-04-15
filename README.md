@@ -1,7 +1,7 @@
 # Classifying MNIST with Triplet Loss
 Simple example of triples loss tested on MNIST dataset.
 You can use this pipeline for any images loaded as numpy arrays.
-You can find more information about triplet loss in a great paper: [["FaceNet: A Unified Embedding for Face Recognition and Clustering"](http://arxiv.org/abs/1503.03832)](https://arxiv.org/abs/1503.03832)
+You can find more information about triplet loss in a great paper: ["FaceNet: A Unified Embedding for Face Recognition and Clustering"](http://arxiv.org/abs/1503.03832)](https://arxiv.org/abs/1503.03832)
 ## Dependencies
 ```
 tensorflow == 1.7
