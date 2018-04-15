@@ -15,9 +15,9 @@ numpy
 * ``batch_size = 128``
 * ``margin = 1.0`` - margin to keep in the triples loss for separation between negatives and positives.
 ## How to
-1. Run `` Mnist_triplet.py`` to train triplet loss and save the model to .
-2. Run ``Create_128_vect.py`` to load the model and get 128 vectors.
-3. Run ``make_prediction.py`` to compute distances between a test example and all of the train examples. The lowest distance represents similarity!
+1. Run `` Mnist_triplet.py``  - to train triplet loss and save the model.
+2. Run ``Create_128_vect.py``  - to load the model and get 128 vectors.
+3. Run ``make_prediction.py`` - to compute distances between a test example and all of the train examples. The lowest distance represents similarity!
 #### I hope it was helpful! Cheers!
 
 > Written with [StackEdit](https://stackedit.io/).
