@@ -1,4 +1,8 @@
-# Classifying MNIST with Triplet Loss
+# Classifying MNIST with Triplet Loss [![Build Status][travis-image]][travis]
+
+[travis-image]: https://travis-ci.org/pavelkrolevets/MNIST_triplet_loss.svg?branch=master
+[travis]: https://travis-ci.org/pavelkrolevets/MNIST_triplet_loss
+
 Simple example of triples loss tested on MNIST dataset.
 You can use this pipeline for any images loaded as numpy arrays.
 You can find more information about triplet loss in a great paper: ["FaceNet: A Unified Embedding for Face Recognition and Clustering"](http://arxiv.org/abs/1503.03832)
