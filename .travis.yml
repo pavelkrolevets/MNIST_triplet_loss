@@ -8,3 +8,5 @@ install:
 # command to run tests
 script:
   - python Mnist_triplet.py
+  - python Create_128_vect.py
+  - python make_prediction.py

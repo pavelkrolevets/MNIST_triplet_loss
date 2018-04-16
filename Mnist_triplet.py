@@ -4,8 +4,6 @@ from keras.datasets import mnist
 import numpy as np
 from keras import backend as K
 
-
-
 #MODEL
 # Architecture
 def inference(x):
@@ -53,7 +51,7 @@ def training(cost, global_step):
 
 if __name__ == '__main__':
     # Parameters
-    training_epochs = 5
+    training_epochs = 1
     display_step = 1
     batch_size = 128
     margin = 1.0
