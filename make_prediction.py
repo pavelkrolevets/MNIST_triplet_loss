@@ -24,6 +24,7 @@ for i in range(embed_train.shape[0]):
 """Sort distances from lowest to largest"""
 matrix_pd = pd.DataFrame(matrix, index=y_train).sort_values(by=[0])
 
+
 """Show 10 labels with lowest distances, basically its a predicted class"""
 print("Closest labels: ", matrix_pd.iloc[0:10], "Real label: ", number_label)
 
