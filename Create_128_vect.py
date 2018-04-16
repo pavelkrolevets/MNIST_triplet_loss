@@ -4,15 +4,6 @@ import keras
 from keras.datasets import mnist
 import numpy as np
 from keras import backend as K
-import cv2 as cv
-from matplotlib import pyplot as plt
-
-
-width = 28
-height = 28
-nClass = 10
-batch_size = 5
-
 
 # input image dimensions
 img_rows, img_cols = 28, 28
@@ -37,8 +28,6 @@ print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
 print(x_test.shape[0], 'test samples')
 print('y_train shape:', y_train.shape)
-#y_train = keras.utils.to_categorical(y_train, nClass)[:60000]
-#y_test = keras.utils.to_categorical(y_test, nClass)
 
 
 x_train_real = []

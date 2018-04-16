@@ -33,9 +33,6 @@ print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
 print(x_test.shape[0], 'test samples')
 print('y_train shape:', y_train.shape)
-#y_train = keras.utils.to_categorical(y_train, nClass)[:60000]
-#y_test = keras.utils.to_categorical(y_test, nClass)
-
 
 x_train_real = []
 for i in range(int(60000)):
@@ -132,7 +129,6 @@ with tf.device('/cpu:0'):
             # Loop over all batches
             for i in range(total_batch_train):
                 # Fit training using batch data
-
                 batch_x, batch_y = sess.run(next_element)
 
                 sess.run(train_op, feed_dict={x: batch_x, y: batch_y})
