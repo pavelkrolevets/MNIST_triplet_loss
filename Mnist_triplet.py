@@ -5,46 +5,9 @@ import numpy as np
 from keras import backend as K
 
 
-# Parameters
-training_epochs = 5
-display_step = 1
-batch_size = 128
-margin = 1.0
-# input image dimensions
-img_rows, img_cols = 28, 28
-
-# the data, split between train and test sets
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-
-if K.image_data_format() == 'channels_first':
-    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
-    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
-    input_shape = (1, img_rows, img_cols)
-else:
-    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
-    input_shape = (img_rows, img_cols, 1)
-
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
-x_train /= 255
-x_test /= 255
-print('x_train shape:', x_train.shape)
-print(x_train.shape[0], 'train samples')
-print(x_test.shape[0], 'test samples')
-print('y_train shape:', y_train.shape)
-
-x_train_real = []
-for i in range(int(60000)):
-    img = x_train[i].reshape((28, 28))
-    x_train_real.append(img.reshape((28, 28, 1)))
-
-x_train_real = np.array(x_train_real)
-
 
 #MODEL
 # Architecture
-
 def inference(x):
     phase_train = tf.constant(True)
     x = tf.reshape(x, shape=[-1, 28, 28, 1])
@@ -74,8 +37,6 @@ def inference(x):
 
     return output
 
-
-
 def loss(output, labels):
     triplet = tf.contrib.losses.metric_learning.triplet_semihard_loss(labels, output, margin=margin)
     loss = tf.reduce_mean(triplet, name='triplet')
@@ -88,59 +49,94 @@ def training(cost, global_step):
     train_op = optimizer.minimize(cost, global_step=global_step)
     return train_op
 
-x = tf.placeholder("float", [None, 28, 28, 1], name='placehold_x')
-y = tf.placeholder('float', [None], name='placehold_y')
-
-output = inference(x)
-tf.identity(output, name="inference")
-
-cost = loss(output, y)
-global_step = tf.Variable(0, name='global_step', trainable=False)
 
 
-train_op = training(cost, global_step)
-saver = tf.train.Saver()
+if __name__ == '__main__':
+    # Parameters
+    training_epochs = 5
+    display_step = 1
+    batch_size = 128
+    margin = 1.0
+    # input image dimensions
+    img_rows, img_cols = 28, 28
 
-"""Making iterator"""
-features_placeholder = tf.placeholder(x_train_real.dtype, x_train_real.shape)
-labels_placeholder = tf.placeholder(y_train.dtype, y_train.shape)
+    # the data, split between train and test sets
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-training_dataset = tf.data.Dataset.from_tensor_slices((features_placeholder, labels_placeholder))
-batched_dataset = training_dataset.batch(batch_size)
+    if K.image_data_format() == 'channels_first':
+        x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
+        x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
+        input_shape = (1, img_rows, img_cols)
+    else:
+        x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
+        x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
+        input_shape = (img_rows, img_cols, 1)
 
-training_init_op = batched_dataset.make_initializable_iterator()
-next_element = training_init_op.get_next()
+    x_train = x_train.astype('float32')
+    x_test = x_test.astype('float32')
+    x_train /= 255
+    x_test /= 255
+    print('x_train shape:', x_train.shape)
+    print(x_train.shape[0], 'train samples')
+    print(x_test.shape[0], 'test samples')
+    print('y_train shape:', y_train.shape)
 
-"""Training"""
-sess = tf.Session()
-init_op = tf.global_variables_initializer()
-sess.run(init_op)
+    x_train_real = []
+    for i in range(int(60000)):
+        img = x_train[i].reshape((28, 28))
+        x_train_real.append(img.reshape((28, 28, 1)))
 
+    x_train_real = np.array(x_train_real)
 
-with tf.device('/cpu:0'):
-    with sess.as_default():
+    x = tf.placeholder("float", [None, 28, 28, 1], name='placehold_x')
+    y = tf.placeholder('float', [None], name='placehold_y')
 
-        # Training cycle
-        for epoch in range(training_epochs):
-            avg_cost = 0.
-            total_batch_train = int(x_train.shape[0] / batch_size)
-            sess.run(training_init_op.initializer, feed_dict={features_placeholder: x_train_real,
-                                                      labels_placeholder: y_train})
-            # Loop over all batches
-            for i in range(total_batch_train):
-                # Fit training using batch data
-                batch_x, batch_y = sess.run(next_element)
+    output = inference(x)
+    tf.identity(output, name="inference")
 
-                sess.run(train_op, feed_dict={x: batch_x, y: batch_y})
-                # Compute average loss
-                avg_cost = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
+    cost = loss(output, y)
+    global_step = tf.Variable(0, name='global_step', trainable=False)
 
+    train_op = training(cost, global_step)
+    saver = tf.train.Saver()
 
-                if not i % 10:
-                    print('Epoch #: ', epoch, 'global step', sess.run(global_step), '  Batch #: ', i, 'loss: ', avg_cost)
+    """Making iterator"""
+    features_placeholder = tf.placeholder(x_train_real.dtype, x_train_real.shape)
+    labels_placeholder = tf.placeholder(y_train.dtype, y_train.shape)
 
-            saver.save(sess, "model_logs/model-checkpoint", global_step=global_step, write_meta_graph=True)
+    training_dataset = tf.data.Dataset.from_tensor_slices((features_placeholder, labels_placeholder))
+    batched_dataset = training_dataset.batch(batch_size)
 
-        print ("Optimization Finished!")
+    training_init_op = batched_dataset.make_initializable_iterator()
+    next_element = training_init_op.get_next()
 
+    """Training"""
+    sess = tf.Session()
+    init_op = tf.global_variables_initializer()
+    sess.run(init_op)
 
+    with tf.device('/cpu:0'):
+        with sess.as_default():
+
+            # Training cycle
+            for epoch in range(training_epochs):
+                avg_cost = 0.
+                total_batch_train = int(x_train.shape[0] / batch_size)
+                sess.run(training_init_op.initializer, feed_dict={features_placeholder: x_train_real,
+                                                                  labels_placeholder: y_train})
+                # Loop over all batches
+                for i in range(total_batch_train):
+                    # Fit training using batch data
+                    batch_x, batch_y = sess.run(next_element)
+
+                    sess.run(train_op, feed_dict={x: batch_x, y: batch_y})
+                    # Compute average loss
+                    avg_cost = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
+
+                    if not i % 10:
+                        print('Epoch #: ', epoch, 'global step', sess.run(global_step), '  Batch #: ', i, 'loss: ',
+                              avg_cost)
+
+                saver.save(sess, "model_logs/model-checkpoint", global_step=global_step, write_meta_graph=True)
+
+            print("Optimization Finished!")
