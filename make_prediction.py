@@ -1,7 +1,5 @@
 import numpy as np
 import pandas as pd
-import cv2 as cv
-import matplotlib.pyplot as plt
 
 embed_train = np.load('./np_embeddings/embeddings_train.npy')
 embed_test = np.load('./np_embeddings/embeddings_test.npy')
